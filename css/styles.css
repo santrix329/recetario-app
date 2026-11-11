@@ -253,6 +253,147 @@ select {
     background: #f6b865;
 }
 
+/* ==========================================================================
+   cuadricula comun de tarjetas
+   ========================================================================== */
+.cuadricula {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
+    gap: var(--espacio);
+}
+
+/* ==========================================================================
+   estados: carga (fantasmas con la forma del contenido), vacio y error
+   ========================================================================== */
+.solo-lectores {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.esqueleto {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-superficie-alta);
+    border-radius: var(--radio-chico);
+}
+
+.esqueleto::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+    animation: brillo-esqueleto 1.3s infinite;
+}
+
+@keyframes brillo-esqueleto {
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.esqueleto--linea {
+    height: 14px;
+}
+
+.esqueleto--corta {
+    width: 55%;
+}
+
+.esqueleto--titulo {
+    height: 34px;
+    width: 80%;
+}
+
+.esqueleto--boton {
+    height: 42px;
+    width: 180px;
+    border-radius: 999px;
+}
+
+.estado-carga--tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr));
+    gap: var(--espacio);
+}
+
+.fantasma-tarjeta {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border-radius: var(--radio);
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+}
+
+.fantasma-tarjeta__imagen {
+    aspect-ratio: 16 / 10;
+}
+
+.fantasma-destacada {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: center;
+    padding: 18px;
+    border-radius: var(--radio);
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+}
+
+.fantasma-destacada__imagen {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radio);
+}
+
+.fantasma-destacada__texto {
+    display: grid;
+    gap: 16px;
+}
+
+.estado {
+    display: grid;
+    justify-items: start;
+    gap: 8px;
+    padding: 24px;
+    border-radius: var(--radio);
+    border: 1px dashed var(--color-borde);
+    background: var(--color-superficie);
+    animation: entrar-vista 260ms var(--curva);
+}
+
+.estado__titulo {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.estado__mensaje {
+    color: var(--color-texto-suave);
+}
+
+.estado--error {
+    border: 1px solid var(--color-error);
+    background: var(--color-error-suave);
+}
+
+.estado--error .estado__titulo {
+    color: var(--color-error);
+}
+
+.estado__reintentar {
+    margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+    .fantasma-destacada {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

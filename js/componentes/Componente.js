@@ -20,6 +20,7 @@ class Componente {
         this.estado = {};
         this.elemento = null;
         this.hijos = [];
+        this.ranuras = new Map();
         this.limpiezas = [];
         this.operaciones = new Map();
         this.destruido = false;
@@ -69,6 +70,21 @@ class Componente {
     }
 
     // ---------------------------------------------------------------------
+    // ranuras: zonas cuyo contenido se reemplaza entero (carga -> resultado ->
+    // error). vaciar una ranura destruye solo los hijos montados en ella.
+
+    montarEnRanura(nombre, componente) {
+        const montado = this.montarHijo(componente);
+        this.ranuras.set(nombre, [...(this.ranuras.get(nombre) ?? []), montado]);
+        return montado;
+    }
+
+    vaciarRanura(nombre) {
+        (this.ranuras.get(nombre) ?? []).forEach((hijo) => this.destruirHijo(hijo));
+        this.ranuras.set(nombre, []);
+    }
+
+    // ---------------------------------------------------------------------
     // eventos
 
     escuchar(objetivo, tipo, manejador) {
@@ -108,6 +124,7 @@ class Componente {
         this.destruido = true;
         this.hijos.forEach((hijo) => hijo.destruir());
         this.hijos = [];
+        this.ranuras.clear();
         this.limpiezas.forEach((limpieza) => limpieza());
         this.limpiezas = [];
         this.elemento?.remove();

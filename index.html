@@ -7,14 +7,23 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <a class="saltar" href="#app">Saltar al contenido</a>
 
-    <!-- Contenedor principal de la SPA -->
-    <div id="app"></div>
+    <!-- la barra de navegacion se monta en esta cabecera -->
+    <header id="contenedor-navegacion" class="cabecera"></header>
+
+    <!-- Contenedor principal de la SPA: aqui se intercambian las vistas -->
+    <main id="app" tabindex="-1"></main>
 
     <!-- servicios: no dependen de la interfaz -->
     <script src="js/servicios/recetas.js" defer></script>
     <script src="js/servicios/cache.js" defer></script>
     <script src="js/servicios/api.js" defer></script>
+
+    <!-- pseudocomponentes: primero la base y sus utilidades -->
+    <script src="js/utilidades/dom.js" defer></script>
+    <script src="js/componentes/Componente.js" defer></script>
+    <script src="js/componentes/BarraNavegacion.js" defer></script>
 
     <!-- Script principal de arranque -->
     <script src="js/app.js" defer></script>

@@ -1,3 +1,30 @@
+/* ==========================================================================
+   tokens: la base oscura (#121212, #e0e0e0, segoe ui) viene del nucleo
+   inicial; el acento es provisional hasta definir la identidad visual
+   ========================================================================== */
+:root {
+    --color-fondo: #121212;
+    --color-superficie: #1b1b1b;
+    --color-superficie-alta: #252525;
+    --color-borde: #333333;
+    --color-texto: #e0e0e0;
+    --color-texto-suave: #a6a6a6;
+    --color-acento: #f2a541;
+    --color-acento-suave: rgba(242, 165, 65, 0.14);
+    --color-sobre-acento: #121212;
+    --color-error: #ff7a6b;
+    --color-error-suave: rgba(255, 122, 107, 0.12);
+
+    --fuente: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    --radio: 14px;
+    --radio-chico: 8px;
+    --espacio: 16px;
+    --sombra: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --duracion: 220ms;
+    --curva: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,15 +32,185 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
+    font-family: var(--fuente);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
     line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
+img {
+    display: block;
+    max-width: 100%;
+}
+
+button,
+input,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 3px solid var(--color-acento);
+    outline-offset: 3px;
+}
+
+/* enlace para saltar la navegacion con teclado */
+.saltar {
+    position: absolute;
+    left: var(--espacio);
+    top: -100px;
+    z-index: 20;
+    padding: 8px 14px;
+    border-radius: var(--radio-chico);
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.saltar:focus {
+    top: var(--espacio);
+}
+
+/* ==========================================================================
+   estructura general
+   ========================================================================== */
 #app {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+}
+
+.cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(18, 18, 18, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-borde);
+}
+
+/* ==========================================================================
+   barra de navegacion
+   ========================================================================== */
+.barra {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.barra__marca {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--color-acento);
+    border-radius: var(--radio-chico);
+    padding: 2px 6px;
+}
+
+.barra__enlaces {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.barra__enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    background: none;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 999px;
+    color: var(--color-texto-suave);
+    font-weight: 600;
+    transition: background var(--duracion) var(--curva), color var(--duracion) var(--curva), border-color var(--duracion) var(--curva);
+}
+
+.barra__enlace:hover {
+    color: var(--color-texto);
+    background: var(--color-superficie-alta);
+}
+
+.barra__enlace--activo {
+    color: var(--color-acento);
+    background: var(--color-acento-suave);
+    border-color: var(--color-acento);
+}
+
+.barra__contador {
+    min-width: 2.4em;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--color-superficie-alta);
+    color: var(--color-texto-suave);
+    font-size: 0.8rem;
     text-align: center;
+}
+
+.barra__contador--con-recetas {
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+}
+
+/* ==========================================================================
+   botones
+   ========================================================================== */
+.boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie-alta);
+    color: var(--color-texto);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform var(--duracion) var(--curva), background var(--duracion) var(--curva), border-color var(--duracion) var(--curva);
+}
+
+.boton:hover {
+    border-color: var(--color-acento);
+    transform: translateY(-1px);
+}
+
+.boton:disabled {
+    opacity: 0.55;
+    cursor: progress;
+    transform: none;
+}
+
+.boton--primario {
+    background: var(--color-acento);
+    border-color: var(--color-acento);
+    color: var(--color-sobre-acento);
+}
+
+.boton--primario:hover {
+    background: #f6b865;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+    }
 }

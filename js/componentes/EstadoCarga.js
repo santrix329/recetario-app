@@ -112,6 +112,11 @@ class EstadoCarga extends Componente {
         });
     }
 
+    // tras un reintento fallido el foco vuelve al boton de reintentar
+    enfocar() {
+        this.elemento?.querySelector(".estado__reintentar")?.focus();
+    }
+
     configurarEventos() {
         if (this.propiedades.tipo !== "error") return;
         this.escuchar(this.elemento, "click", (evento) => {

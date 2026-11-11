@@ -25,7 +25,7 @@ const VISTAS = {
     explorar: { Clase: VistaPendiente, titulo: "Explorar" },
     categorias: { Clase: VistaPendiente, titulo: "Categorías y orígenes" },
     comparador: { Clase: VistaPendiente, titulo: "Comparador" },
-    detalle: { Clase: VistaPendiente, titulo: "Detalle de receta" },
+    detalle: { Clase: VistaDetalle, titulo: "Detalle de receta" },
 };
 
 // estado de navegacion de la sesion: vive solo en memoria

@@ -1,0 +1,257 @@
+/* ==========================================================================
+   vista explorar: encabezado, formulario de busqueda, campo con
+   sugerencias y resultados. usa los tokens de styles.css
+   ========================================================================== */
+.explorar__encabezado {
+    display: grid;
+    gap: 6px;
+}
+
+.explorar__bajada {
+    color: var(--color-texto-suave);
+    max-width: 60ch;
+}
+
+/* ==========================================================================
+   formulario de busqueda
+   ========================================================================== */
+.formulario-busqueda {
+    --color-borde-hover: #5a5a5a;
+
+    display: grid;
+    gap: 18px;
+    padding: 18px;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie);
+    animation: entrar-vista 320ms var(--curva) both;
+}
+
+.formulario-busqueda__campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+    gap: var(--espacio);
+    align-items: start;
+}
+
+.campo {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.campo__etiqueta {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+/* controles propios: sin el aspecto por defecto del navegador */
+.campo__control {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-chico);
+    background: var(--color-superficie-alta);
+    color: var(--color-texto);
+    -webkit-appearance: none;
+    appearance: none;
+    color-scheme: dark;
+    transition: border-color var(--duracion) var(--curva), background var(--duracion) var(--curva);
+}
+
+.campo__control::placeholder {
+    color: var(--color-texto-suave);
+    opacity: 0.75;
+}
+
+.campo__control:hover {
+    border-color: var(--color-borde-hover);
+}
+
+.campo__control:focus-visible {
+    border-color: var(--color-acento);
+    outline-offset: 2px;
+}
+
+.campo__control[aria-invalid="true"] {
+    border-color: var(--color-error);
+    background: var(--color-error-suave);
+}
+
+/* selector con flecha dibujada en css */
+.campo__selector {
+    position: relative;
+}
+
+.campo__selector::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--color-texto-suave);
+    border-bottom: 2px solid var(--color-texto-suave);
+    transform: translateY(-75%) rotate(45deg);
+    pointer-events: none;
+    transition: border-color var(--duracion) var(--curva);
+}
+
+.campo__selector:hover::after,
+.campo__selector:focus-within::after {
+    border-color: var(--color-acento);
+}
+
+.campo__control--selector {
+    padding-right: 42px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+
+.campo__control--selector option {
+    background: var(--color-superficie);
+    color: var(--color-texto);
+}
+
+/* mensajes de validacion junto al campo y junto a los botones */
+.campo__mensaje,
+.formulario-busqueda__mensaje {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-error);
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.campo__mensaje[hidden] {
+    display: none;
+}
+
+.campo__mensaje::before,
+.formulario-busqueda__mensaje:not(:empty)::before {
+    content: "!";
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-error);
+    color: var(--color-fondo);
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.formulario-busqueda__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ==========================================================================
+   campo con sugerencias (combobox)
+   ========================================================================== */
+.sugerencias {
+    position: relative;
+}
+
+.sugerencias__lista {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 5;
+    display: grid;
+    gap: 2px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 6px;
+    list-style: none;
+    border-radius: var(--radio-chico);
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie-alta);
+    box-shadow: var(--sombra);
+    animation: aparecer-sugerencias 160ms var(--curva);
+}
+
+.sugerencias__lista[hidden] {
+    display: none;
+}
+
+@keyframes aparecer-sugerencias {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.sugerencias__opcion {
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--duracion) var(--curva), color var(--duracion) var(--curva);
+}
+
+.sugerencias__opcion:hover {
+    background: var(--color-superficie);
+}
+
+/* la opcion activa hace de foco visible: el foco real queda en el campo */
+.sugerencias__opcion--activa,
+.sugerencias__opcion--activa:hover {
+    background: var(--color-acento-suave);
+    color: var(--color-acento);
+    box-shadow: inset 3px 0 0 var(--color-acento);
+}
+
+.sugerencias__coincidencia {
+    background: none;
+    color: inherit;
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-color: var(--color-acento);
+    text-underline-offset: 3px;
+}
+
+/* ==========================================================================
+   resultados
+   ========================================================================== */
+.explorar__cabecera-resultados {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+}
+
+.explorar__titulo-resultados:focus {
+    outline: none;
+}
+
+.explorar__criterios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+
+.explorar__criterios[hidden] {
+    display: none;
+}
+
+.explorar__criterios .dato {
+    animation: entrar-vista 260ms var(--curva) both;
+}
+
+/* los resultados entran con la misma transicion que las vistas */
+.vista-explorar .listado {
+    animation: entrar-vista 320ms var(--curva) both;
+}

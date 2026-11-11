@@ -22,7 +22,7 @@ const RUTAS_NAVEGACION = [
 
 const VISTAS = {
     inicio: { Clase: VistaInicio, titulo: "Inicio" },
-    explorar: { Clase: VistaPendiente, titulo: "Explorar" },
+    explorar: { Clase: VistaExplorar, titulo: "Explorar" },
     categorias: { Clase: VistaCategoriasOrigenes, titulo: "Categorías y orígenes" },
     comparador: { Clase: VistaPendiente, titulo: "Comparador" },
     detalle: { Clase: VistaDetalle, titulo: "Detalle de receta" },

@@ -35,6 +35,12 @@ function urlImagenIngrediente(nombre) {
     return URL_IMAGENES_INGREDIENTES + encodeURIComponent(nombre) + ".png";
 }
 
+// themealdb sirve versiones reducidas de cada imagen agregando un sufijo;
+// en las tarjetas basta la mediana (unos 45 kb en vez de 125 kb)
+function miniaturaReceta(urlImagen) {
+    return urlImagen ? urlImagen + "/medium" : "";
+}
+
 // "Meat, Casserole,," -> ["Meat", "Casserole"]
 function extraerEtiquetas(textoEtiquetas) {
     return limpiarTexto(textoEtiquetas)
@@ -80,6 +86,36 @@ function normalizarResumen(recetaCruda) {
         completa: false,
     };
 }
+
+// ---------------------------------------------------------------------------
+// combinacion de listas
+
+// interseccion por id: una receta queda solo si aparece en todas las listas.
+// si alguna lista trae la version completa (search.php) se conserva esa.
+function intersecarRecetas(listas) {
+    if (listas.length === 0) return [];
+
+    const idsPorLista = listas.map((lista) => new Set(lista.map((receta) => receta.id)));
+    const mejorVersion = new Map();
+    for (const lista of listas) {
+        for (const receta of lista) {
+            const guardada = mejorVersion.get(receta.id);
+            if (!guardada || (!guardada.completa && receta.completa)) mejorVersion.set(receta.id, receta);
+        }
+    }
+
+    return [...idsPorLista[0]]
+        .filter((id) => idsPorLista.every((ids) => ids.has(id)))
+        .map((id) => mejorVersion.get(id));
+}
+
+// devuelve una copia ordenada; no modifica la lista recibida
+function ordenarPorNombre(recetas) {
+    return [...recetas].sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { sensitivity: "base" }));
+}
+
+// ---------------------------------------------------------------------------
+// normalizadores
 
 // categoria de categories.php
 function normalizarCategoria(categoriaCruda) {

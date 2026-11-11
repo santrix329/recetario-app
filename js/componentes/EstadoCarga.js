@@ -6,7 +6,8 @@
  *
  * propiedades:
  *   tipo:     "carga" | "vacio" | "error"
- *   forma:    en "carga", forma del contenido que reemplaza: "destacada" | "tarjetas"
+ *   forma:    en "carga", forma del contenido que reemplaza:
+ *             "destacada" | "tarjetas" | "detalle" | "formulario" | "opciones"
  *   cantidad: en forma "tarjetas", cuantas tarjetas fantasma dibujar
  *   titulo, mensaje: textos del estado "vacio"
  *   error:    ErrorApi del estado "error"
@@ -36,15 +37,66 @@ class EstadoCarga extends Componente {
         });
         contenedor.append(crearNodo("span", { clase: "solo-lectores", texto: "Cargando…" }));
 
-        if (forma === "destacada") {
-            contenedor.append(this.crearFantasmaDestacada());
-        } else {
-            const cantidad = this.propiedades.cantidad ?? 6;
-            for (let indice = 0; indice < cantidad; indice++) {
-                contenedor.append(this.crearFantasmaTarjeta());
-            }
-        }
+        const cantidad = this.propiedades.cantidad ?? 6;
+        const fantasmas = {
+            destacada: () => [this.crearFantasmaDestacada()],
+            detalle: () => [this.crearFantasmaDetalle()],
+            formulario: () => [this.crearFantasmaFormulario()],
+            opciones: () => [this.crearFantasmaOpciones(cantidad)],
+            tarjetas: () => Array.from({ length: cantidad }, () => this.crearFantasmaTarjeta()),
+        };
+        contenedor.append(...(fantasmas[forma] ?? fantasmas.tarjetas)());
         return contenedor;
+    }
+
+    // lineas fantasma con anchos variados para que parezcan texto
+    crearLineasFantasma(cantidad) {
+        const anchos = ["esqueleto--larga", "", "esqueleto--corta"];
+        return Array.from({ length: cantidad }, (_, indice) =>
+            crearNodo("div", { clase: `esqueleto esqueleto--linea ${anchos[indice % anchos.length]}` })
+        );
+    }
+
+    crearFantasmaDetalle() {
+        return crearNodo("div", {
+            clase: "fantasma-detalle",
+            atributos: { "aria-hidden": "true" },
+            hijos: [
+                this.crearFantasmaDestacada(),
+                crearNodo("div", {
+                    clase: "fantasma-detalle__columnas",
+                    hijos: [
+                        crearNodo("div", { clase: "fantasma-detalle__bloque", hijos: this.crearLineasFantasma(6) }),
+                        crearNodo("div", { clase: "fantasma-detalle__bloque", hijos: this.crearLineasFantasma(8) }),
+                    ],
+                }),
+            ],
+        });
+    }
+
+    crearFantasmaFormulario() {
+        return crearNodo("div", {
+            clase: "fantasma-formulario",
+            atributos: { "aria-hidden": "true" },
+            hijos: [
+                ...Array.from({ length: 4 }, () => crearNodo("div", {
+                    clase: "fantasma-formulario__campo",
+                    hijos: [
+                        crearNodo("div", { clase: "esqueleto esqueleto--linea esqueleto--corta" }),
+                        crearNodo("div", { clase: "esqueleto esqueleto--campo" }),
+                    ],
+                })),
+                crearNodo("div", { clase: "esqueleto esqueleto--boton" }),
+            ],
+        });
+    }
+
+    crearFantasmaOpciones(cantidad) {
+        return crearNodo("div", {
+            clase: "fantasma-opciones",
+            atributos: { "aria-hidden": "true" },
+            hijos: Array.from({ length: cantidad }, () => crearNodo("div", { clase: "esqueleto esqueleto--opcion" })),
+        });
     }
 
     crearFantasmaDestacada() {

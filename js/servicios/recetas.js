@@ -81,6 +81,16 @@ function normalizarResumen(recetaCruda) {
     };
 }
 
+// categoria de categories.php
+function normalizarCategoria(categoriaCruda) {
+    return {
+        id: limpiarTexto(categoriaCruda.idCategory),
+        nombre: limpiarTexto(categoriaCruda.strCategory),
+        imagen: limpiarTexto(categoriaCruda.strCategoryThumb),
+        descripcion: limpiarTexto(categoriaCruda.strCategoryDescription),
+    };
+}
+
 // receta completa: search.php, lookup.php y random.php
 function normalizarReceta(recetaCruda) {
     const instrucciones = limpiarTexto(recetaCruda.strInstructions);

@@ -877,6 +877,195 @@ select {
     justify-self: end;
 }
 
+/* ==========================================================================
+   tabla de comparacion
+   ========================================================================== */
+.comparacion {
+    display: grid;
+    gap: var(--espacio);
+    animation: entrar-vista 320ms var(--curva) both;
+}
+
+.comparacion__veredicto {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--espacio);
+}
+
+.comparacion__sencilla,
+.comparacion__similitud {
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    padding: 18px;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie);
+}
+
+.comparacion__sencilla {
+    border-left: 5px solid var(--color-acento);
+}
+
+.comparacion__sencilla-titulo {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.comparacion__sencilla-razon,
+.comparacion__similitud-etiqueta {
+    color: var(--color-texto-suave);
+}
+
+.comparacion__similitud-valor {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-acento);
+}
+
+.comparacion__barra {
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--color-superficie-alta);
+}
+
+.comparacion__barra-relleno {
+    display: block;
+    height: 100%;
+    background: var(--color-acento);
+    transition: width 600ms var(--curva);
+}
+
+.comparacion__marco {
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    overflow: hidden;
+}
+
+.comparacion__tabla {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    background: var(--color-superficie);
+}
+
+.comparacion__tabla th,
+.comparacion__tabla td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.comparacion__tabla tbody tr:last-child > * {
+    border-bottom: none;
+}
+
+.comparacion__tabla thead th {
+    background: var(--color-superficie-alta);
+    font-size: 0.95rem;
+}
+
+.comparacion__tabla thead th:first-child {
+    width: 34%;
+}
+
+.comparacion__tabla tbody th {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+}
+
+.comparacion__letra {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-size: 0.8rem;
+}
+
+.comparacion__valor {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.comparacion__valor--menor {
+    color: var(--color-acento);
+    background: var(--color-acento-suave);
+}
+
+.comparacion__menor {
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.comparacion__coincide,
+.comparacion__difiere {
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.comparacion__coincide {
+    background: var(--color-acento-suave);
+    color: var(--color-acento);
+}
+
+.comparacion__difiere {
+    background: var(--color-superficie-alta);
+    color: var(--color-texto-suave);
+}
+
+.comparacion__lista {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.comparacion__lista .dato {
+    font-size: 0.8rem;
+    padding: 2px 10px;
+}
+
+.comparacion__ninguno {
+    color: var(--color-texto-suave);
+    font-style: italic;
+}
+
+@media (max-width: 720px) {
+    .comparacion__veredicto {
+        grid-template-columns: 1fr;
+    }
+
+    .comparacion__tabla th,
+    .comparacion__tabla td {
+        padding: 10px 8px;
+        font-size: 0.85rem;
+    }
+
+    .comparacion__letra {
+        display: grid;
+        margin: 0 0 4px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -36,6 +36,7 @@ js/servicios/recetas.js         normalización, intersección y orden de recetas
 js/servicios/cache.js           caché en memoria (sin persistencia)
 js/servicios/api.js             petición centralizada y endpoints permitidos
 js/servicios/sesionComparador.js  las dos recetas del comparador
+js/servicios/comparacion.js     métricas del comparador y receta más sencilla
 js/utilidades/dom.js            crearNodo: construye nodos sin innerHTML
 js/componentes/                 pseudocomponentes (uno por archivo)
 js/vistas/                      vistas, también pseudocomponentes
@@ -65,6 +66,7 @@ Todos heredan de `Componente`, que separa `crearElemento`, `renderizar`, `config
 | `Pestanas` | Pestañas accesibles (flechas, Inicio, Fin). | `pestanas:cambiar` `{ id }` |
 | `ListaOpciones` | Lista de categorías u orígenes, con filtro opcional. Se instancia una vez por pestaña. | `opcion:elegir` `{ valor }` |
 | `EncabezadoFicha` | Encabezado de la ficha de una categoría o de un origen. | — |
+| `TablaComparacion` | Métricas entre las recetas A y B: resalta el menor valor numérico, lista etiquetas e ingredientes en común y exclusivos, similitud y receta más sencilla (menos ingredientes, luego menos pasos, luego menos palabras). | — |
 | `VistaInicio`, `VistaExplorar`, `VistaDetalle`, `VistaCategoriasOrigenes` | Componen los pseudocomponentes de cada vista. `VistaDetalle` emite `vista:volver`. | — |
 | `VistaPendiente` | Marcador temporal del comparador. | — |
 

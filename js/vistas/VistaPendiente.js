@@ -119,6 +119,31 @@ class VistaComparador extends Componente {
         });
 
         contenedor.append(panelesGrid);
+
+        // Controles globales (intercambiar paneles o vaciar todo)
+        const controlesGlobales = crearNodo("div", { clase: "comparador__controles-globales" });
+
+        if (cantidad === 2) {
+            const btnIntercambiar = crearNodo("button", { 
+                clase: "btn btn-secundario", 
+                texto: "⇄ Intercambiar posiciones" 
+            });
+            btnIntercambiar.addEventListener("click", () => intercambiarPaneles());
+            controlesGlobales.append(btnIntercambiar);
+        }
+
+        const btnVaciarTodo = crearNodo("button", { 
+            clase: "btn btn-peligro", 
+            texto: "Vaciar comparador" 
+        });
+        btnVaciarTodo.addEventListener("click", () => {
+            vaciarPanel(0);
+            vaciarPanel(1);
+        });
+        controlesGlobales.append(btnVaciarTodo);
+
+        contenedor.append(controlesGlobales);
+
         return contenedor;
     }
 }

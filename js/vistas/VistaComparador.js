@@ -5,24 +5,16 @@
 class VistaComparador extends Componente {
     constructor(propiedades) {
         super(propiedades);
-        this.actualizarVista = this.actualizarVista.bind(this);
     }
 
-    montar(contenedor) {
-        super.montar(contenedor);
-        avisosComparador.addEventListener("cambio", this.actualizarVista);
-    }
-
-    desmontar() {
-        avisosComparador.removeEventListener("cambio", this.actualizarVista);
-        super.desmontar();
-    }
-
-    actualizarVista() {
-        const contenedorInterno = this.elemento.querySelector(".comparador__contenido");
-        if (contenedorInterno) {
-            contenedorInterno.replaceWith(this.crearContenidoComparador());
-        }
+    montar() {
+        // Nos suscribimos al evento de cambio usando el helper de la clase base
+        this.escuchar(avisosComparador, "cambio", () => {
+            if (!this.destruido) {
+                this.renderizar();
+            }
+        });
+        return super.montar();
     }
 
     crearElemento() {
@@ -39,25 +31,43 @@ class VistaComparador extends Componente {
             texto: "Analiza similitudes y diferencias entre platos de forma dinámica."
         });
 
-        seccion.append(titulo, subtitulo, this.crearContenidoComparador());
+        const contenido = crearNodo("div", { clase: "comparador__contenido" });
+        
+        seccion.append(titulo, subtitulo, contenido);
         return seccion;
     }
 
-    crearContenidoComparador() {
-        const contenedor = crearNodo("div", { clase: "comparador__contenido" });
+    renderizar() {
+        const contenedorContenido = this.elemento.querySelector(".comparador__contenido");
+        if (!contenedorContenido) return;
+
+        // Limpiamos el contenido anterior interno antes de pintar el nuevo estado
+        contenedorContenido.innerHTML = "";
+        contenedorContenido.append(this.generarContenidoComparador());
+    }
+
+    generarContenidoComparador() {
+        const contenedor = document.createDocumentFragment();
+        const recetas = recetasEnComparador();
         const cantidad = cantidadEnComparador();
 
-        // Estado inicial: Vacío
+        // Estado 1: Vacío
         if (cantidad === 0) {
             const mensajeVacio = crearNodo("div", { clase: "comparador__vacio" });
             
             const icono = crearNodo("div", { clase: "comparador__vacio-icono", texto: "⚖️" });
             const h3 = crearNodo("h3", { texto: "El comparador está vacío" });
             const p = crearNodo("p", { texto: 'Explora el catálogo y selecciona recetas usando el botón "Comparar".' });
+            
             const enlace = crearNodo("a", { 
                 clase: "btn btn-primario", 
                 texto: "Ir a explorar",
-                atributos: { href: "#/explorar" }
+                atributos: { href: "#" }
+            });
+            
+            this.escuchar(enlace, "click", (e) => {
+                e.preventDefault();
+                navegarA("explorar");
             });
 
             mensajeVacio.append(icono, h3, p, enlace);
@@ -65,9 +75,8 @@ class VistaComparador extends Componente {
             return contenedor;
         }
 
-        // Estado con recetas: Paneles A y B
+        // Estado 2: Con recetas (Paneles A y B)
         const panelesGrid = crearNodo("div", { clase: "comparador__paneles" });
-        const recetas = recetasEnComparador();
 
         recetas.forEach((receta, index) => {
             const letraPanel = index === 0 ? "A" : "B";
@@ -84,25 +93,38 @@ class VistaComparador extends Componente {
                     texto: "✕",
                     atributos: { title: "Quitar receta", "data-index": index }
                 });
-                btnQuitar.addEventListener("click", () => vaciarPanel(index));
+                
+                this.escuchar(btnQuitar, "click", () => vaciarPanel(index));
                 cabecera.append(btnQuitar);
 
+                const nombreReceta = receta.strMeal || receta.nombre || receta.titulo || "Receta sin nombre";
+                const imagenReceta = receta.strMealThumb || receta.imagen || receta.foto || "";
+                const categoriaReceta = receta.strCategory || receta.categoria || "N/A";
+                const origenReceta = receta.strArea || receta.origen || "N/A";
+                const idReceta = receta.idMeal || receta.id || "";
+
                 const infoReceta = crearNodo("div", { clase: "panel__info-receta" });
-                const img = crearNodo("img", { 
-                    clase: "panel__imagen", 
-                    atributos: { src: receta.strMealThumb, alt: receta.strMeal } 
-                });
-                const nombre = crearNodo("h3", { clase: "panel__nombre", texto: receta.strMeal });
+                
+                const imgAtribs = { alt: nombreReceta };
+                if (imagenReceta) imgAtribs.src = imagenReceta;
+                const img = crearNodo("img", { clase: "panel__imagen", atributos: imgAtribs });
+                
+                const nombre = crearNodo("h3", { clase: "panel__nombre", texto: nombreReceta });
                 
                 const meta = crearNodo("div", { clase: "panel__meta" });
-                const tagCat = crearNodo("span", { clase: "tag", texto: `Cat: ${receta.strCategory || "N/A"}` });
-                const tagArea = crearNodo("span", { clase: "tag", texto: `Origen: ${receta.strArea || "N/A"}` });
+                const tagCat = crearNodo("span", { clase: "tag", texto: `Cat: ${categoriaReceta}` });
+                const tagArea = crearNodo("span", { clase: "tag", texto: `Origen: ${origenReceta}` });
                 meta.append(tagCat, tagArea);
 
                 const enlaceDetalle = crearNodo("a", { 
                     clase: "btn btn-secundario", 
                     texto: "Ver receta completa",
-                    atributos: { href: `#/detalle?id=${receta.idMeal}` }
+                    atributos: { href: "#" }
+                });
+
+                this.escuchar(enlaceDetalle, "click", (e) => {
+                    e.preventDefault();
+                    if (idReceta) abrirReceta(idReceta);
                 });
 
                 infoReceta.append(img, nombre, meta, enlaceDetalle);
@@ -128,7 +150,7 @@ class VistaComparador extends Componente {
                 clase: "btn btn-secundario", 
                 texto: "⇄ Intercambiar posiciones" 
             });
-            btnIntercambiar.addEventListener("click", () => intercambiarPaneles());
+            this.escuchar(btnIntercambiar, "click", () => intercambiarPaneles());
             controlesGlobales.append(btnIntercambiar);
         }
 
@@ -136,7 +158,7 @@ class VistaComparador extends Componente {
             clase: "btn btn-peligro", 
             texto: "Vaciar comparador" 
         });
-        btnVaciarTodo.addEventListener("click", () => {
+        this.escuchar(btnVaciarTodo, "click", () => {
             vaciarPanel(0);
             vaciarPanel(1);
         });

@@ -21,5 +21,3 @@ class ServicioAPI {
         }
     }
 }
-
-export default ServicioAPI;

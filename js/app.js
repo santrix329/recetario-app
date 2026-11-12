@@ -24,7 +24,7 @@ const VISTAS = {
     inicio: { Clase: VistaInicio, titulo: "Inicio" },
     explorar: { Clase: VistaExplorar, titulo: "Explorar" },
     categorias: { Clase: VistaCategoriasOrigenes, titulo: "Categorías y orígenes" },
-    comparador: { Clase: VistaPendiente, titulo: "Comparador" },
+    comparador: { Clase: VistaComparador, titulo: "Comparador" },
     detalle: { Clase: VistaDetalle, titulo: "Detalle de receta" },
 };
 
@@ -57,6 +57,9 @@ function navegarA(idVista, parametros = {}, { enfocar = true } = {}) {
         sesion.estadosGuardados[sesion.idVistaActual] = sesion.vistaActual.exportarEstado();
         sesion.vistaActual.destruir();
     }
+
+    // <-- LA CLAVE: Limpiar por completo el contenedor antes de montar la nueva vista para evitar acumulaciones
+    contenedorVistas.innerHTML = "";
 
     sesion.idVistaActual = idVista;
     sesion.vistaActual = new definicion.Clase(contenedorVistas, {

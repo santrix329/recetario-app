@@ -1,33 +1,69 @@
 /*
- * VistaPendiente
- * vista provisional para las secciones que todavia no se construyen.
- * deja ver que la navegacion y los parametros llegan bien.
- *
- * propiedades: { titulo, parametros }
+ * VistaComparador
+ * Vista principal para comparar recetas con enfoque dinamico basado en nodos.
  */
-class VistaPendiente extends Componente {
+class VistaComparador extends Componente {
+    constructor(propiedades) {
+        super(propiedades);
+        this.actualizarVista = this.actualizarVista.bind(this);
+    }
+
+    montar(contenedor) {
+        super.montar(contenedor);
+        avisosComparador.addEventListener("cambio", this.actualizarVista);
+    }
+
+    desmontar() {
+        avisosComparador.removeEventListener("cambio", this.actualizarVista);
+        super.desmontar();
+    }
+
+    actualizarVista() {
+        const contenedorInterno = this.elemento.querySelector(".comparador__contenido");
+        if (contenedorInterno) {
+            contenedorInterno.replaceWith(this.crearContenidoComparador());
+        }
+    }
+
     crearElemento() {
-        const vista = crearNodo("section", { clase: "vista vista-pendiente" });
+        const seccion = crearNodo("section", { clase: "vista vista-comparador" });
+        
         const titulo = crearNodo("h1", {
             clase: "vista__titulo",
-            texto: this.propiedades.titulo,
-            atributos: { tabindex: "-1" },
+            texto: "Comparador de recetas",
+            atributos: { tabindex: "-1" }
         });
-        const aviso = crearNodo("p", {
-            clase: "vista-pendiente__aviso",
-            texto: "Esta sección todavía está en construcción.",
-        });
-        vista.append(titulo, aviso);
 
-        // muestra lo que la vista recibio, por ejemplo el id de la receta a abrir
-        const parametros = Object.entries(this.propiedades.parametros ?? {});
-        if (parametros.length > 0) {
-            const lista = crearNodo("dl", { clase: "vista-pendiente__parametros" });
-            for (const [nombre, valor] of parametros) {
-                lista.append(crearNodo("dt", { texto: nombre }), crearNodo("dd", { texto: valor }));
-            }
-            vista.append(lista);
+        const subtitulo = crearNodo("p", {
+            clase: "vista__subtitulo",
+            texto: "Analiza similitudes y diferencias entre platos de forma dinámica."
+        });
+
+        seccion.append(titulo, subtitulo, this.crearContenidoComparador());
+        return seccion;
+    }
+
+    crearContenidoComparador() {
+        const contenedor = crearNodo("div", { clase: "comparador__contenido" });
+        const cantidad = cantidadEnComparador();
+
+        // Estado inicial: Vacío
+        if (cantidad === 0) {
+            const mensajeVacio = crearNodo("div", { clase: "comparador__vacio" });
+            
+            const icono = crearNodo("div", { clase: "comparador__vacio-icono", texto: "⚖️" });
+            const h3 = crearNodo("h3", { texto: "El comparador está vacío" });
+            const p = crearNodo("p", { texto: 'Explora el catálogo y selecciona recetas usando el botón "Comparar".' });
+            const enlace = crearNodo("a", { 
+                clase: "btn btn-primario", 
+                texto: "Ir a explorar",
+                atributos: { href: "#/explorar" }
+            });
+
+            mensajeVacio.append(icono, h3, p, enlace);
+            contenedor.append(mensajeVacio);
         }
-        return vista;
+
+        return contenedor;
     }
 }

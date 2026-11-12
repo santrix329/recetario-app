@@ -1,27 +1,145 @@
 /*
- * serviciorecetas
- * servicio especializado en gestionar las operaciones y consultas de recetas.
+ * recetas.js
+ * normaliza las recetas crudas de themealdb a un formato propio.
+ * el resto de la aplicacion solo trabaja con este formato, nunca con los
+ * campos strIngredient1..20 ni strMeasure1..20 de la api.
+ *
+ * receta resumida: { id, nombre, imagen, completa: false }
+ * receta completa: { id, nombre, imagen, completa: true, categoria, origen,
+ *                    instrucciones, etiquetas, video, ingredientes, pasos, palabras }
  */
-class ServicioRecetas {
-    constructor() {
-        this.api = new ServicioAPI();
+
+const MAXIMO_INGREDIENTES_API = 20;
+const URL_IMAGENES_INGREDIENTES = "https://www.themealdb.com/images/ingredients/";
+
+// una linea que solo trae la numeracion del paso: "STEP 1", "step 2:", "1.", "3)"
+const PATRON_ENCABEZADO_PASO = /^(step|paso)?\s*\d+\s*[.:)\-]?$/i;
+
+// convierte cualquier valor de la api en texto sin espacios en los extremos
+function limpiarTexto(valor) {
+    return typeof valor === "string" ? valor.trim() : "";
+}
+
+// clave para comparar ingredientes y etiquetas sin distinguir mayusculas
+function normalizarClave(texto) {
+    return limpiarTexto(texto).toLowerCase();
+}
+
+// recorta un texto largo y agrega puntos suspensivos solo si hizo falta cortar
+function resumirTexto(texto, maximo) {
+    const limpio = limpiarTexto(texto);
+    return limpio.length > maximo ? limpio.slice(0, maximo) + "…" : limpio;
+}
+
+function urlImagenIngrediente(nombre) {
+    return URL_IMAGENES_INGREDIENTES + encodeURIComponent(nombre) + ".png";
+}
+
+// themealdb sirve versiones reducidas de cada imagen agregando un sufijo;
+// en las tarjetas basta la mediana (unos 45 kb en vez de 125 kb)
+function miniaturaReceta(urlImagen) {
+    return urlImagen ? urlImagen + "/medium" : "";
+}
+
+// "Meat, Casserole,," -> ["Meat", "Casserole"]
+function extraerEtiquetas(textoEtiquetas) {
+    return limpiarTexto(textoEtiquetas)
+        .split(",")
+        .map(limpiarTexto)
+        .filter((etiqueta) => etiqueta !== "");
+}
+
+// un paso es cada linea no vacia que no sea solo un encabezado de numeracion
+function extraerPasos(instrucciones) {
+    return limpiarTexto(instrucciones)
+        .split(/\r?\n/)
+        .map(limpiarTexto)
+        .filter((linea) => linea !== "" && !PATRON_ENCABEZADO_PASO.test(linea));
+}
+
+function contarPalabras(texto) {
+    const limpio = limpiarTexto(texto);
+    return limpio === "" ? 0 : limpio.split(/\s+/).length;
+}
+
+// recorre los 20 pares nombre/medida y se queda con los que tienen nombre
+function extraerIngredientes(recetaCruda) {
+    const ingredientes = [];
+    for (let numero = 1; numero <= MAXIMO_INGREDIENTES_API; numero++) {
+        const nombre = limpiarTexto(recetaCruda["strIngredient" + numero]);
+        if (nombre === "") continue;
+        ingredientes.push({
+            nombre,
+            medida: limpiarTexto(recetaCruda["strMeasure" + numero]),
+            imagen: urlImagenIngrediente(nombre),
+        });
+    }
+    return ingredientes;
+}
+
+// receta resumida: lo unico que devuelven los endpoints filter.php
+function normalizarResumen(recetaCruda) {
+    return {
+        id: limpiarTexto(recetaCruda.idMeal),
+        nombre: limpiarTexto(recetaCruda.strMeal),
+        imagen: limpiarTexto(recetaCruda.strMealThumb),
+        completa: false,
+    };
+}
+
+// ---------------------------------------------------------------------------
+// combinacion de listas
+
+// interseccion por id: una receta queda solo si aparece en todas las listas.
+// si alguna lista trae la version completa (search.php) se conserva esa.
+function intersecarRecetas(listas) {
+    if (listas.length === 0) return [];
+
+    const idsPorLista = listas.map((lista) => new Set(lista.map((receta) => receta.id)));
+    const mejorVersion = new Map();
+    for (const lista of listas) {
+        for (const receta of lista) {
+            const guardada = mejorVersion.get(receta.id);
+            if (!guardada || (!guardada.completa && receta.completa)) mejorVersion.set(receta.id, receta);
+        }
     }
 
-    // busca recetas que coincidan con un nombre o termino
-    async buscarLosPorNombre(termino) {
-        const respuesta = await this.api.obtenerDatos(`search.php?s=${termino}`);
-        return respuesta ? respuesta.meals : [];
-    }
+    return [...idsPorLista[0]]
+        .filter((id) => idsPorLista.every((ids) => ids.has(id)))
+        .map((id) => mejorVersion.get(id));
+}
 
-    // obtiene los detalles completos de una receta usando su id unico
-    async obtenerPorId(id) {
-        const respuesta = await this.api.obtenerDatos(`lookup.php?i=${id}`);
-        return respuesta && respuesta.meals ? respuesta.meals[0] : null;
-    }
+// devuelve una copia ordenada; no modifica la lista recibida
+function ordenarPorNombre(recetas) {
+    return [...recetas].sort((a, b) => a.nombre.localeCompare(b.nombre, "es", { sensitivity: "base" }));
+}
 
-    // obtiene una receta aleatoria para la vista de inicio
-    async obtenerAleatoria() {
-        const respuesta = await this.api.obtenerDatos("random.php");
-        return respuesta && respuesta.meals ? respuesta.meals[0] : null;
-    }
+// ---------------------------------------------------------------------------
+// normalizadores
+
+// categoria de categories.php
+function normalizarCategoria(categoriaCruda) {
+    return {
+        id: limpiarTexto(categoriaCruda.idCategory),
+        nombre: limpiarTexto(categoriaCruda.strCategory),
+        imagen: limpiarTexto(categoriaCruda.strCategoryThumb),
+        descripcion: limpiarTexto(categoriaCruda.strCategoryDescription),
+    };
+}
+
+// receta completa: search.php, lookup.php y random.php
+function normalizarReceta(recetaCruda) {
+    const instrucciones = limpiarTexto(recetaCruda.strInstructions);
+    return {
+        ...normalizarResumen(recetaCruda),
+        completa: true,
+        categoria: limpiarTexto(recetaCruda.strCategory),
+        origen: limpiarTexto(recetaCruda.strArea),
+        instrucciones,
+        etiquetas: extraerEtiquetas(recetaCruda.strTags),
+        video: limpiarTexto(recetaCruda.strYoutube),
+        ingredientes: extraerIngredientes(recetaCruda),
+        pasos: extraerPasos(instrucciones),
+        palabras: contarPalabras(instrucciones),
+    };
 }

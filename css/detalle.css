@@ -1,0 +1,286 @@
+/* ==========================================================================
+   vista de detalle de receta
+   usa los tokens de styles.css; este archivo se carga despues de el
+   ========================================================================== */
+
+/* una sola columna que nunca crece mas que la pantalla */
+.vista-detalle {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.detalle__encabezado {
+    display: grid;
+    gap: 12px;
+}
+
+.detalle__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.detalle__volver:hover {
+    background: var(--color-acento-suave);
+}
+
+.detalle__zona:empty {
+    display: none;
+}
+
+/* el contenido aparece con la misma transicion que las vistas */
+.detalle__contenido {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+    animation: entrar-vista 320ms var(--curva) both;
+}
+
+/* display: grid pisaria al atributo hidden si no se repite aqui */
+.detalle__contenido[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   cabecera de la receta
+   ========================================================================== */
+.cabecera-receta {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: center;
+    padding: 18px;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie);
+    box-shadow: var(--sombra);
+}
+
+.cabecera-receta__imagen {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radio);
+    background: var(--color-superficie-alta);
+}
+
+.cabecera-receta__informacion {
+    display: grid;
+    gap: 20px;
+    align-content: center;
+}
+
+.cabecera-receta__datos,
+.cabecera-receta__etiquetas {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cabecera-receta__bloque {
+    display: grid;
+    gap: 8px;
+}
+
+.cabecera-receta__subtitulo {
+    color: var(--color-texto-suave);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.cabecera-receta__sin-etiquetas {
+    color: var(--color-texto-suave);
+    font-style: italic;
+}
+
+.dato--etiqueta {
+    border: 1px solid rgba(242, 165, 65, 0.45);
+    background: var(--color-acento-suave);
+    color: var(--color-acento);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.cabecera-receta__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cabecera-receta__video:hover {
+    background: var(--color-acento-suave);
+    color: var(--color-acento);
+}
+
+.cabecera-receta__icono {
+    font-size: 0.95em;
+    transition: transform var(--duracion) var(--curva);
+}
+
+.cabecera-receta__video:hover .cabecera-receta__icono {
+    transform: translate(2px, -2px);
+}
+
+/* ==========================================================================
+   cuerpo: ingredientes a la izquierda (1fr) y pasos a la derecha (2fr)
+   ========================================================================== */
+.detalle__cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.detalle__columna {
+    min-width: 0;
+}
+
+.ingredientes,
+.pasos {
+    display: grid;
+    gap: var(--espacio);
+    padding: 20px;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie);
+}
+
+.detalle__titulo-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.detalle__cantidad {
+    padding: 1px 10px;
+    border-radius: 999px;
+    background: var(--color-acento-suave);
+    color: var(--color-acento);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* lista de ingredientes */
+.ingredientes__lista {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.ingrediente {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 8px;
+    border-radius: var(--radio-chico);
+    background: var(--color-superficie-alta);
+}
+
+.ingrediente__imagen {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    padding: 4px;
+    border-radius: var(--radio-chico);
+    background: var(--color-fondo);
+}
+
+.ingrediente__imagen--alternativa {
+    padding: 0;
+    object-fit: cover;
+}
+
+.ingrediente__texto {
+    display: grid;
+    line-height: 1.35;
+}
+
+.ingrediente__nombre {
+    font-weight: 600;
+}
+
+.ingrediente__medida {
+    color: var(--color-texto-suave);
+    font-size: 0.9rem;
+}
+
+/* pasos numerados con contadores de css */
+.pasos__lista {
+    list-style: none;
+    counter-reset: paso;
+    display: grid;
+    gap: 18px;
+}
+
+.paso {
+    counter-increment: paso;
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.paso::before {
+    content: counter(paso);
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-weight: 800;
+}
+
+.paso__texto {
+    padding-top: 0.3rem;
+    line-height: 1.7;
+}
+
+/* ==========================================================================
+   recetas relacionadas
+   ========================================================================== */
+.detalle__relacionadas {
+    padding-top: 28px;
+    border-top: 1px solid var(--color-borde);
+}
+
+/* ==========================================================================
+   pantallas angostas: todo en una columna
+   ========================================================================== */
+@media (max-width: 720px) {
+    .cabecera-receta,
+    .detalle__cuerpo {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cabecera-receta {
+        padding: 14px;
+        gap: 18px;
+    }
+
+    .ingredientes,
+    .pasos {
+        padding: 16px;
+    }
+
+    .paso {
+        grid-template-columns: 2rem minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .paso::before {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.9rem;
+    }
+
+    .paso__texto {
+        padding-top: 0.15rem;
+    }
+}

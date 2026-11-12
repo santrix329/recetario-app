@@ -1,0 +1,218 @@
+/* ================================================================= *
+ * Estilos para la Vista Comparador
+ * ================================================================= */
+
+.vista-comparador {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.comparador__subtitulo {
+    color: var(--color-texto-secundario, #a0a0a0);
+    margin-bottom: 2rem;
+}
+
+/* Estado Vacío */
+.comparador__vacio {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+.comparador__vacio-icono {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.comparador__vacio h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-texto, #ffffff);
+}
+
+.comparador__vacio p {
+    color: var(--color-texto-secundario, #a0a0a0);
+    margin-bottom: 1.5rem;
+}
+
+/* Paneles del Comparador (Grid Lado a Lado) */
+.comparador__paneles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.comparador__panel {
+    background: var(--color-superficie, #1a1a1a);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.panel__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panel__badge {
+    background: var(--color-primario, #f59e0b);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.panel__imagen {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.panel__nombre {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-texto, #ffffff);
+}
+
+.panel__meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+/* Panel Vacío o Disponible */
+.comparador__panel--vacio {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    background: transparent;
+    min-height: 320px;
+}
+
+.panel__vacio p {
+    font-weight: 600;
+    color: var(--color-texto, #ffffff);
+    margin-bottom: 0.25rem;
+}
+
+.panel__vacio-sub {
+    font-size: 0.85rem;
+    color: var(--color-texto-secundario, #a0a0a0);
+}
+
+/* Botón dentro de la tarjeta del panel ("Ver receta completa") */
+.comparador__panel .btn-secundario {
+    display: inline-block;
+    text-align: center;
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--color-primario, #f59e0b);
+    border: 1px solid var(--color-primario, #f59e0b);
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    transition: background 0.2s, color 0.2s;
+}
+
+.comparador__panel .btn-secundario:hover {
+    background: var(--color-primario, #f59e0b);
+    color: #000000;
+}
+
+/* Controles Globales (Botones de abajo: Intercambiar y Vaciar) */
+.comparador__controles-globales {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comparador__controles-globales .btn-secundario {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-texto, #ffffff);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.comparador__controles-globales .btn-secundario:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.comparador__controles-globales .btn-peligro {
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.comparador__controles-globales .btn-peligro:hover {
+    background: #dc2626;
+}
+
+/* Botón para quitar receta de cada panel (la "X") */
+.btn-quitar {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-texto, #ffffff);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-quitar:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+/* Botón / enlace en el estado vacío del comparador */
+.comparador__vacio a {
+    display: inline-block;
+    background: var(--color-primario, #f59e0b);
+    color: #000000;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: opacity 0.2s;
+}
+
+.comparador__vacio a:hover {
+    opacity: 0.9;
+}

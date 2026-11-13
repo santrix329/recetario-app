@@ -10,8 +10,8 @@
  *   3. se monta la nueva con su estado guardado, si lo tenia
  */
 
-// nombre provisional: el enunciado pide uno original distinto de "Recetario"
-const NOMBRE_APP = "Recetario";
+// nombre original de la aplicacion (el enunciado pide uno distinto de "Recetario")
+const NOMBRE_APP = "El Fogonsón";
 
 const RUTAS_NAVEGACION = [
     { id: "inicio", texto: "Inicio" },

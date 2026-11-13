@@ -23,8 +23,11 @@ class BarraNavegacion extends Componente {
         const barra = crearNodo("nav", { clase: "barra", atributos: { "aria-label": "Navegación principal" } });
         const marca = crearNodo("button", {
             clase: "barra__marca",
-            texto: this.propiedades.nombreApp,
             atributos: { type: "button", "data-vista": "inicio" },
+            hijos: [
+                crearNodo("img", { clase: "barra__icono", atributos: { src: "assets/icono.svg", alt: "", width: 30, height: 30 } }),
+                crearNodo("span", { texto: this.propiedades.nombreApp }),
+            ],
         });
         const lista = crearNodo("ul", { clase: "barra__enlaces" });
 

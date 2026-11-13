@@ -155,6 +155,9 @@ select {
 }
 
 .barra__marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     border: none;
     background: none;
     cursor: pointer;
@@ -164,6 +167,15 @@ select {
     color: var(--color-acento);
     border-radius: var(--radio-chico);
     padding: 2px 6px;
+}
+
+.barra__icono {
+    border-radius: 8px;
+    transition: transform var(--duracion) var(--curva);
+}
+
+.barra__marca:hover .barra__icono {
+    transform: rotate(-8deg) scale(1.08);
 }
 
 .barra__enlaces {

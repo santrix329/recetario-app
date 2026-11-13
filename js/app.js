@@ -58,9 +58,6 @@ function navegarA(idVista, parametros = {}, { enfocar = true } = {}) {
         sesion.vistaActual.destruir();
     }
 
-    // <-- LA CLAVE: Limpiar por completo el contenedor antes de montar la nueva vista para evitar acumulaciones
-    contenedorVistas.innerHTML = "";
-
     sesion.idVistaActual = idVista;
     sesion.vistaActual = new definicion.Clase(contenedorVistas, {
         titulo: definicion.titulo,

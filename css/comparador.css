@@ -1,218 +1,243 @@
-/* ================================================================= *
- * Estilos para la Vista Comparador
- * ================================================================= */
-
-.vista-comparador {
-    padding: 2rem 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+/* ==========================================================================
+   vista del comparador: paneles a y b, controles y comparacion
+   usa los tokens de css/styles.css
+   ========================================================================== */
+.comparador__encabezado {
+    display: grid;
+    gap: 6px;
 }
 
-.comparador__subtitulo {
-    color: var(--color-texto-secundario, #a0a0a0);
-    margin-bottom: 2rem;
+.comparador__bajada {
+    color: var(--color-texto-suave);
+    max-width: 60ch;
 }
 
-/* Estado Vacío */
-.comparador__vacio {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 2px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    margin-top: 2rem;
-}
-
-.comparador__vacio-icono {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-}
-
-.comparador__vacio h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--color-texto, #ffffff);
-}
-
-.comparador__vacio p {
-    color: var(--color-texto-secundario, #a0a0a0);
-    margin-bottom: 1.5rem;
-}
-
-/* Paneles del Comparador (Grid Lado a Lado) */
+/* anchas: lado a lado; angostas: apilados */
 .comparador__paneles {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--espacio);
 }
 
-.comparador__panel {
-    background: var(--color-superficie, #1a1a1a);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 1.5rem;
+.comparador__controles {
     display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.panel__cabecera {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.panel__badge {
-    background: var(--color-primario, #f59e0b);
-    color: #000;
-    font-weight: 700;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    text-transform: uppercase;
-}
-
-.panel__imagen {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.panel__nombre {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--color-texto, #ffffff);
-}
-
-.panel__meta {
-    display: flex;
-    gap: 0.5rem;
     flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-}
-
-/* Panel Vacío o Disponible */
-.comparador__panel--vacio {
     justify-content: center;
-    align-items: center;
-    text-align: center;
-    border: 2px dashed rgba(255, 255, 255, 0.1);
-    background: transparent;
-    min-height: 320px;
+    gap: 10px;
 }
 
-.panel__vacio p {
-    font-weight: 600;
-    color: var(--color-texto, #ffffff);
-    margin-bottom: 0.25rem;
+.comparador__comparacion:empty {
+    display: none;
 }
 
-.panel__vacio-sub {
-    font-size: 0.85rem;
-    color: var(--color-texto-secundario, #a0a0a0);
+/* ==========================================================================
+   panel
+   ========================================================================== */
+.panel-comparador {
+    display: grid;
+    align-content: start;
+    gap: var(--espacio);
+    padding: 18px;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-borde);
+    border-top: 4px solid var(--color-acento);
+    background: var(--color-superficie);
+    animation: entrar-vista 320ms var(--curva) both;
 }
 
-/* Botón dentro de la tarjeta del panel ("Ver receta completa") */
-.comparador__panel .btn-secundario {
-    display: inline-block;
-    text-align: center;
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--color-primario, #f59e0b);
-    border: 1px solid var(--color-primario, #f59e0b);
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 600;
-    margin-top: 0.5rem;
-    transition: background 0.2s, color 0.2s;
+.panel-comparador--vacio {
+    border-top-style: dashed;
 }
 
-.comparador__panel .btn-secundario:hover {
-    background: var(--color-primario, #f59e0b);
-    color: #000000;
-}
-
-/* Controles Globales (Botones de abajo: Intercambiar y Vaciar) */
-.comparador__controles-globales {
+.panel-comparador__cabecera {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    align-items: center;
+    gap: 10px;
 }
 
-.comparador__controles-globales .btn-secundario {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--color-texto, #ffffff);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.comparador__controles-globales .btn-secundario:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.comparador__controles-globales .btn-peligro {
-    background: #ef4444;
-    color: #ffffff;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.comparador__controles-globales .btn-peligro:hover {
-    background: #dc2626;
-}
-
-/* Botón para quitar receta de cada panel (la "X") */
-.btn-quitar {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--color-texto, #ffffff);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    width: 28px;
-    height: 28px;
+.panel-comparador__letra {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    background: var(--color-acento);
+    color: var(--color-sobre-acento);
+    font-weight: 800;
+}
+
+.panel-comparador__titulo {
+    font-size: 1.1rem;
+}
+
+.panel-comparador__ficha {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    animation: entrar-vista 260ms var(--curva) both;
+}
+
+.panel-comparador__imagen {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radio-chico);
+    background: var(--color-superficie-alta);
+}
+
+.panel-comparador__datos {
+    display: grid;
+    gap: 10px;
+}
+
+.panel-comparador__nombre {
+    font-size: 1.05rem;
+    line-height: 1.3;
+}
+
+.panel-comparador__chips,
+.panel-comparador__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-comparador__chips .dato {
+    font-size: 0.8rem;
+    padding: 2px 10px;
+}
+
+.panel-comparador__vacio {
+    display: grid;
+    gap: 4px;
+    padding: 18px;
+    border-radius: var(--radio-chico);
+    border: 1px dashed var(--color-borde);
+    color: var(--color-texto-suave);
+    text-align: center;
+}
+
+.panel-comparador__vacio-titulo {
+    color: var(--color-texto);
+    font-weight: 700;
+}
+
+/* buscador interno */
+.panel-comparador__buscador {
+    display: grid;
+    gap: 8px;
+}
+
+.panel-comparador__etiqueta {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+}
+
+.panel-comparador__campo {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radio-chico);
+    border: 1px solid var(--color-borde);
+    background: var(--color-superficie-alta);
+    appearance: none;
+    transition: border-color var(--duracion) var(--curva);
+}
+
+.panel-comparador__campo:hover {
+    border-color: var(--color-texto-suave);
+}
+
+.panel-comparador__campo:focus-visible {
+    outline-offset: 1px;
+    border-color: var(--color-acento);
+}
+
+.panel-comparador__campo::-webkit-search-cancel-button {
+    filter: invert(0.7);
+}
+
+.panel-comparador__mensaje {
+    min-height: 1.4em;
+    font-size: 0.85rem;
+    color: var(--color-texto-suave);
+}
+
+.panel-comparador__mensaje:empty {
+    min-height: 0;
+}
+
+.panel-comparador__mensaje--error {
+    color: var(--color-error);
+    font-weight: 600;
+}
+
+.panel-comparador__lista {
+    list-style: none;
+    display: grid;
+    gap: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.panel-comparador__resultado {
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
+    padding: 6px;
+    text-align: left;
+    border-radius: var(--radio-chico);
+    border: 1px solid transparent;
+    background: var(--color-superficie-alta);
     cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: bold;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    animation: entrar-vista 220ms var(--curva) both;
+    transition: border-color var(--duracion) var(--curva);
 }
 
-.btn-quitar:hover {
-    background: #ef4444;
-    border-color: #ef4444;
-    color: #ffffff;
+.panel-comparador__resultado:hover {
+    border-color: var(--color-acento);
 }
 
-/* Botón / enlace en el estado vacío del comparador */
-.comparador__vacio a {
-    display: inline-block;
-    background: var(--color-primario, #f59e0b);
-    color: #000000;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+.panel-comparador__resultado img {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.panel-comparador__resultado-texto {
+    display: grid;
+    min-width: 0;
+}
+
+.panel-comparador__resultado-nombre {
     font-weight: 600;
-    text-decoration: none;
-    margin-top: 1rem;
-    transition: opacity 0.2s;
 }
 
-.comparador__vacio a:hover {
-    opacity: 0.9;
+.panel-comparador__resultado-meta {
+    font-size: 0.8rem;
+    color: var(--color-texto-suave);
+}
+
+.panel-comparador__fantasmas {
+    display: grid;
+    gap: 6px;
+}
+
+.panel-comparador__fantasma {
+    height: 56px;
+}
+
+@media (max-width: 720px) {
+    .comparador__paneles {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-comparador__ficha {
+        grid-template-columns: 88px minmax(0, 1fr);
+    }
 }

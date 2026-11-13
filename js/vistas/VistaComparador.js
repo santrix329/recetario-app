@@ -1,171 +1,119 @@
 /*
  * VistaComparador
- * Vista principal para comparar recetas con enfoque dinamico basado en nodos.
+ * dos paneles (a y b) y, cuando los dos tienen receta, la tabla de comparacion.
+ *
+ * las recetas viven en sesionComparador.js, asi se conservan al navegar.
+ * la vista escucha el evento "cambio" de esa sesion y sincroniza paneles y tabla.
+ *
+ * escucha: "panel:elegir", "panel:vaciar" (de sus paneles), "cambio" (sesion)
+ * deja subir: "receta:abrir" (lo resuelve app.js)
  */
 class VistaComparador extends Componente {
-    constructor(propiedades) {
-        super(propiedades);
+    constructor(contenedor, propiedades) {
+        super(contenedor, propiedades);
+        this.paneles = [];
+        this.zonaPaneles = null;
+        this.zonaComparacion = null;
+        this.botonIntercambiar = null;
+        this.botonVaciar = null;
+        this.tabla = null;
     }
 
     montar() {
-        // Nos suscribimos al evento de cambio usando el helper de la clase base
-        this.escuchar(avisosComparador, "cambio", () => {
-            if (!this.destruido) {
-                this.renderizar();
-            }
-        });
-        return super.montar();
+        super.montar();
+        // el panel es el pseudocomponente reutilizado: una instancia por letra
+        const recetas = recetasEnComparador();
+        this.paneles = LETRAS_PANELES.map((letra, indice) =>
+            this.montarHijo(new PanelComparador(this.zonaPaneles, { indice, letra, receta: recetas[indice] }))
+        );
+        this.sincronizar();
+        return this;
     }
 
     crearElemento() {
-        const seccion = crearNodo("section", { clase: "vista vista-comparador" });
-        
-        const titulo = crearNodo("h1", {
-            clase: "vista__titulo",
-            texto: "Comparador de recetas",
-            atributos: { tabindex: "-1" }
+        this.zonaPaneles = crearNodo("div", { clase: "comparador__paneles" });
+        this.zonaComparacion = crearNodo("div", { clase: "comparador__comparacion" });
+        this.botonIntercambiar = crearNodo("button", {
+            clase: "boton",
+            texto: "⇄ Intercambiar paneles",
+            atributos: { type: "button", "data-accion": "intercambiar" },
+        });
+        this.botonVaciar = crearNodo("button", {
+            clase: "boton",
+            texto: "Vaciar comparador",
+            atributos: { type: "button", "data-accion": "vaciar" },
         });
 
-        const subtitulo = crearNodo("p", {
-            clase: "vista__subtitulo",
-            texto: "Analiza similitudes y diferencias entre platos de forma dinámica."
+        return crearNodo("div", {
+            clase: "vista vista-comparador",
+            hijos: [
+                crearNodo("header", {
+                    clase: "comparador__encabezado",
+                    hijos: [
+                        crearNodo("h1", { clase: "vista__titulo", texto: "Comparador de recetas", atributos: { tabindex: "-1" } }),
+                        crearNodo("p", {
+                            clase: "comparador__bajada",
+                            texto: "Pon dos recetas lado a lado y descubre cuál es más sencilla y cuánto se parecen.",
+                        }),
+                    ],
+                }),
+                this.zonaPaneles,
+                crearNodo("div", { clase: "comparador__controles", hijos: [this.botonIntercambiar, this.botonVaciar] }),
+                this.zonaComparacion,
+            ],
         });
-
-        const contenido = crearNodo("div", { clase: "comparador__contenido" });
-        
-        seccion.append(titulo, subtitulo, contenido);
-        return seccion;
     }
 
-    renderizar() {
-        const contenedorContenido = this.elemento.querySelector(".comparador__contenido");
-        if (!contenedorContenido) return;
+    configurarEventos() {
+        this.escuchar(avisosComparador, "cambio", () => this.sincronizar());
 
-        // Limpiamos el contenido anterior interno antes de pintar el nuevo estado
-        contenedorContenido.innerHTML = "";
-        contenedorContenido.append(this.generarContenidoComparador());
-    }
-
-    generarContenidoComparador() {
-        const contenedor = document.createDocumentFragment();
-        const recetas = recetasEnComparador();
-        const cantidad = cantidadEnComparador();
-
-        // Estado 1: Vacío
-        if (cantidad === 0) {
-            const mensajeVacio = crearNodo("div", { clase: "comparador__vacio" });
-            
-            const icono = crearNodo("div", { clase: "comparador__vacio-icono", texto: "⚖️" });
-            const h3 = crearNodo("h3", { texto: "El comparador está vacío" });
-            const p = crearNodo("p", { texto: 'Explora el catálogo y selecciona recetas usando el botón "Comparar".' });
-            
-            const enlace = crearNodo("a", { 
-                clase: "btn btn-primario", 
-                texto: "Ir a explorar",
-                atributos: { href: "#" }
-            });
-            
-            this.escuchar(enlace, "click", (e) => {
-                e.preventDefault();
-                navegarA("explorar");
-            });
-
-            mensajeVacio.append(icono, h3, p, enlace);
-            contenedor.append(mensajeVacio);
-            return contenedor;
-        }
-
-        // Estado 2: Con recetas (Paneles A y B)
-        const panelesGrid = crearNodo("div", { clase: "comparador__paneles" });
-
-        recetas.forEach((receta, index) => {
-            const letraPanel = index === 0 ? "A" : "B";
-            const panelClase = receta ? `comparador__panel comparador__panel--${letraPanel.toLowerCase()}` : `comparador__panel comparador__panel--vacio`;
-            const panel = crearNodo("div", { clase: panelClase });
-
-            const cabecera = crearNodo("div", { clase: "panel__cabecera" });
-            const badge = crearNodo("span", { clase: "panel__badge", texto: `Panel ${letraPanel}` });
-            cabecera.append(badge);
-
-            if (receta) {
-                const btnQuitar = crearNodo("button", { 
-                    clase: "btn-icon btn-quitar", 
-                    texto: "✕",
-                    atributos: { title: "Quitar receta", "data-index": index }
-                });
-                
-                this.escuchar(btnQuitar, "click", () => vaciarPanel(index));
-                cabecera.append(btnQuitar);
-
-                const nombreReceta = receta.strMeal || receta.nombre || receta.titulo || "Receta sin nombre";
-                const imagenReceta = receta.strMealThumb || receta.imagen || receta.foto || "";
-                const categoriaReceta = receta.strCategory || receta.categoria || "N/A";
-                const origenReceta = receta.strArea || receta.origen || "N/A";
-                const idReceta = receta.idMeal || receta.id || "";
-
-                const infoReceta = crearNodo("div", { clase: "panel__info-receta" });
-                
-                const imgAtribs = { alt: nombreReceta };
-                if (imagenReceta) imgAtribs.src = imagenReceta;
-                const img = crearNodo("img", { clase: "panel__imagen", atributos: imgAtribs });
-                
-                const nombre = crearNodo("h3", { clase: "panel__nombre", texto: nombreReceta });
-                
-                const meta = crearNodo("div", { clase: "panel__meta" });
-                const tagCat = crearNodo("span", { clase: "tag", texto: `Cat: ${categoriaReceta}` });
-                const tagArea = crearNodo("span", { clase: "tag", texto: `Origen: ${origenReceta}` });
-                meta.append(tagCat, tagArea);
-
-                const enlaceDetalle = crearNodo("a", { 
-                    clase: "btn btn-secundario", 
-                    texto: "Ver receta completa",
-                    atributos: { href: "#" }
-                });
-
-                this.escuchar(enlaceDetalle, "click", (e) => {
-                    e.preventDefault();
-                    if (idReceta) abrirReceta(idReceta);
-                });
-
-                infoReceta.append(img, nombre, meta, enlaceDetalle);
-                panel.append(cabecera, infoReceta);
-            } else {
-                const vacioInfo = crearNodo("div", { clase: "panel__vacio" });
-                const p1 = crearNodo("p", { texto: "Espacio disponible" });
-                const p2 = crearNodo("span", { clase: "panel__vacio-sub", texto: "Selecciona otra receta para comparar lado a lado" });
-                vacioInfo.append(p1, p2);
-                panel.append(cabecera, vacioInfo);
+        this.escuchar(this.elemento, "panel:elegir", (evento) => {
+            const { indice, receta } = evento.detail;
+            const panel = this.paneles[indice];
+            if (colocarEnPanel(indice, receta) === "repetida") {
+                panel.mostrarAviso("Esa receta ya está en el comparador: no se puede comparar consigo misma.");
+                return;
             }
-
-            panelesGrid.append(panel);
+            panel.limpiarBusqueda();
         });
 
-        contenedor.append(panelesGrid);
+        this.escuchar(this.elemento, "panel:vaciar", (evento) => vaciarPanel(evento.detail.indice));
 
-        // Controles globales (intercambiar paneles o vaciar todo)
-        const controlesGlobales = crearNodo("div", { clase: "comparador__controles-globales" });
+        this.escuchar(this.elemento, "click", (evento) => {
+            const boton = evento.target.closest("[data-accion]");
+            if (!boton || !this.elemento.contains(boton) || boton.closest(".panel-comparador")) return;
+            if (boton.dataset.accion === "intercambiar") intercambiarPaneles();
+            if (boton.dataset.accion === "vaciar") {
+                vaciarPanel(0);
+                vaciarPanel(1);
+            }
+        });
+    }
+
+    // pone la sesion en pantalla: recetas de cada panel, botones y tabla
+    sincronizar() {
+        if (this.destruido) return;
+        const recetas = recetasEnComparador();
+        this.paneles.forEach((panel, indice) => panel.mostrarReceta(recetas[indice]));
+
+        const cantidad = cantidadEnComparador();
+        this.botonIntercambiar.disabled = cantidad === 0;
+        this.botonVaciar.disabled = cantidad === 0;
+
+        this.destruirHijo(this.tabla);
+        this.tabla = null;
+        this.vaciarRanura("comparacion");
 
         if (cantidad === 2) {
-            const btnIntercambiar = crearNodo("button", { 
-                clase: "btn btn-secundario", 
-                texto: "⇄ Intercambiar posiciones" 
-            });
-            this.escuchar(btnIntercambiar, "click", () => intercambiarPaneles());
-            controlesGlobales.append(btnIntercambiar);
+            this.tabla = this.montarHijo(new TablaComparacion(this.zonaComparacion, { recetas }));
+            return;
         }
-
-        const btnVaciarTodo = crearNodo("button", { 
-            clase: "btn btn-peligro", 
-            texto: "Vaciar comparador" 
-        });
-        this.escuchar(btnVaciarTodo, "click", () => {
-            vaciarPanel(0);
-            vaciarPanel(1);
-        });
-        controlesGlobales.append(btnVaciarTodo);
-
-        contenedor.append(controlesGlobales);
-
-        return contenedor;
+        this.montarEnRanura("comparacion", new EstadoCarga(this.zonaComparacion, {
+            tipo: "vacio",
+            titulo: cantidad === 0 ? "El comparador está vacío" : "Falta una receta",
+            mensaje: cantidad === 0
+                ? "Busca una receta en cada panel o usa el botón «Comparar» de cualquier tarjeta."
+                : "Elige una receta para el otro panel y aquí aparecerá la comparación.",
+        }));
     }
 }
